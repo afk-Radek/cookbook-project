@@ -1,49 +1,22 @@
-import { useNavigate } from "react-router-dom";
-import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
+import { Link } from "react-router-dom";
 
 function Navigation() {
-  const navigate = useNavigate();
-
   return (
-    <Navbar
-      expand="md"
-      bg="primary"
-      data-bs-theme="dark"
-      collapseOnSelect={true}
-    >
-      <Container>
-        <Navbar.Brand onClick={() => navigate("")}>
-          <img
-            src={moneyIcon}
-            alt="FinMan"
-            height={20}
-            style={{ marginRight: 6 }}
-          />
-          FinMan
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" size="sm" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link
-              onClick={() => navigate("")}
-              active={window.location.pathname === "/"}
-              eventKey="dashboard"
-            >
-              Dashboard
-            </Nav.Link>
-            <Nav.Link
-              onClick={() => navigate("categoryList")}
-              active={window.location.pathname === "/categoryList"}
-              eventKey="categoryList"
-            >
-              Categories
-            </Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+    <nav className="bg-zinc-900 text-white px-6 py-4">
+      <div className="flex items-center gap-6">
+        <Link to="/" className="text-xl font-bold">
+          Cookbook
+        </Link>
+
+        <Link to="/" className="hover:text-orange-300">
+          Recepty
+        </Link>
+
+        <Link to="/recipe/create" className="hover:text-orange-300">
+          Přidat recept
+        </Link>
+      </div>
+    </nav>
   );
 }
 

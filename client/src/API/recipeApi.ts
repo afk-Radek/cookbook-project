@@ -1,10 +1,16 @@
 export type Recipe = {
   id: string;
-  name: string;
-  description?: string;
-  recipeCategoryId?: string;
+  title: string;
+  preparationTime: number;
+  numberOfIngredients: number;
   rating?: number;
+  description: string;
+  preparationSteps: string;
+  note?: string;
+  recipeCategoryId: string;
 };
+
+export type RecipeCreateDto = Omit<Recipe, "id">;
 
 export type RecipeListResponse = {
   itemList: Recipe[];
@@ -19,6 +25,8 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
   });
 
   if (!response.ok) {
+    const errorBody = await response.text();
+    console.error("API error:", response.status, errorBody);
     throw new Error("Chyba při komunikaci s backendem");
   }
 
@@ -33,10 +41,16 @@ export function getRecipe(id: string): Promise<Recipe> {
   return request<Recipe>(`/recipe/get?id=${id}`);
 }
 
-export function createRecipe(recipe: Omit<Recipe, "id">): Promise<Recipe> {
+export function createRecipe(recipe: RecipeCreateDto): Promise<Recipe> {
   return request<Recipe>("/recipe/create", {
     method: "POST",
     body: JSON.stringify(recipe),
+  });
+}
+export function deleteRecipe(id: string): Promise<void> {
+  return request<void>("/recipe/delete", {
+    method: "POST",
+    body: JSON.stringify({ id }),
   });
 }
 
@@ -44,12 +58,5 @@ export function updateRecipe(recipe: Recipe): Promise<Recipe> {
   return request<Recipe>("/recipe/update", {
     method: "POST",
     body: JSON.stringify(recipe),
-  });
-}
-
-export function deleteRecipe(id: string): Promise<void> {
-  return request<void>("/recipe/delete", {
-    method: "POST",
-    body: JSON.stringify({ id }),
   });
 }

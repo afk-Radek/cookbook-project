@@ -1,6 +1,12 @@
 export type Category = {
   id: string;
   name: string;
+  desc?: string;
+};
+
+export type CategoryCreateDto = {
+  name: string;
+  desc?: string;
 };
 
 export type CategoryListResponse = {
@@ -16,6 +22,8 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
   });
 
   if (!response.ok) {
+    const errorBody = await response.text();
+    console.error("API error:", response.status, errorBody);
     throw new Error("API request failed");
   }
 
@@ -30,9 +38,7 @@ export function getCategory(id: string): Promise<Category> {
   return request<Category>(`/recipeCategory/get?id=${id}`);
 }
 
-export function createCategory(
-  category: Omit<Category, "id">,
-): Promise<Category> {
+export function createCategory(category: CategoryCreateDto): Promise<Category> {
   return request<Category>("/recipeCategory/create", {
     method: "POST",
     body: JSON.stringify(category),
