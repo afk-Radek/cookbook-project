@@ -4,11 +4,15 @@ const addFormats = require("ajv-formats").default;
 const ajv = new Ajv();
 addFormats(ajv);
 
-const recipeCategoryDao = require("../../dao/category-dao.js");
+const recipeDao = require("../../dao/recipe-dao.js");
 
 const schema = {
   type: "object",
-  properties: {},
+  properties: {
+    search: { type: "string" },
+    rating: { type: "string" },
+    recipeCategoryId: { type: "string" },
+  },
   required: [],
   additionalProperties: false,
 };
@@ -29,12 +33,14 @@ async function ListAbl(req, res) {
       return;
     }
 
-    const recipeCategoryList = recipeCategoryDao.list();
+    const recipeList = recipeDao.list(dtoIn);
 
     res.json({
-      itemList: recipeCategoryList,
+      itemList: recipeList,
     });
   } catch (e) {
+    console.error(e);
+
     res.status(500).json({
       code: "internalServerError",
       message: e.message,
