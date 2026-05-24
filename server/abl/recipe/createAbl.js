@@ -30,17 +30,42 @@ const schema = {
   additionalProperties: false,
 };
 
+function normalizeText(value) {
+  return typeof value === "string" ? value.trim() : value;
+}
+
 async function CreateAbl(req, res) {
   try {
-    const dtoIn = req.body;
+    const dtoIn = {
+      ...req.body,
+      title: normalizeText(req.body.title),
+      description: normalizeText(req.body.description),
+      preparationSteps: normalizeText(req.body.preparationSteps),
+      note: normalizeText(req.body.note),
+    };
 
     const valid = ajv.validate(schema, dtoIn);
 
     if (!valid) {
       res.status(400).json({
         code: "dtoInIsNotValid",
-        message: "dtoIn is not valid",
+        message: "Recipe input is not valid.",
         validationError: ajv.errors,
+      });
+      return;
+    }
+
+    const recipeList = recipeDao.list();
+
+    const recipeExists = recipeList.some(
+      (recipe) =>
+        recipe.title.trim().toLowerCase() === dtoIn.title.toLowerCase(),
+    );
+
+    if (recipeExists) {
+      res.status(400).json({
+        code: "recipeAlreadyExists",
+        message: `Recipe with title "${dtoIn.title}" already exists.`,
       });
       return;
     }
@@ -50,7 +75,7 @@ async function CreateAbl(req, res) {
     if (!category) {
       res.status(400).json({
         code: "categoryDoesNotExist",
-        message: `category with id ${dtoIn.recipeCategoryId} does not exist`,
+        message: `Category with id ${dtoIn.recipeCategoryId} does not exist.`,
       });
       return;
     }

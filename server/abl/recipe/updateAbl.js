@@ -11,29 +11,39 @@ const schema = {
   type: "object",
   properties: {
     id: { type: "string", minLength: 32, maxLength: 32 },
-    title: { type: "string", minLength: 1 },
+    title: { type: "string", minLength: 1, maxLength: 150 },
     preparationTime: { type: "number", minimum: 1 },
     numberOfIngredients: { type: "number", minimum: 1 },
     rating: { type: "number", minimum: 1, maximum: 5 },
-    description: { type: "string", minLength: 1 },
-    preparationSteps: { type: "string", minLength: 1 },
-    note: { type: "string" },
-    recipeCategoryId: { type: "string" },
+    description: { type: "string", minLength: 1, maxLength: 1000 },
+    preparationSteps: { type: "string", minLength: 1, maxLength: 5000 },
+    note: { type: "string", maxLength: 1000 },
+    recipeCategoryId: { type: "string", minLength: 32, maxLength: 32 },
   },
   required: ["id"],
   additionalProperties: false,
 };
 
+function normalizeText(value) {
+  return typeof value === "string" ? value.trim() : value;
+}
+
 async function UpdateAbl(req, res) {
   try {
-    const recipe = req.body;
+    const recipe = {
+      ...req.body,
+      title: normalizeText(req.body.title),
+      description: normalizeText(req.body.description),
+      preparationSteps: normalizeText(req.body.preparationSteps),
+      note: normalizeText(req.body.note),
+    };
 
     const valid = ajv.validate(schema, recipe);
 
     if (!valid) {
       res.status(400).json({
         code: "dtoInIsNotValid",
-        message: "dtoIn is not valid",
+        message: "Recipe input is not valid.",
         validationError: ajv.errors,
       });
       return;
@@ -44,9 +54,27 @@ async function UpdateAbl(req, res) {
     if (!existingRecipe) {
       res.status(404).json({
         code: "recipeNotFound",
-        message: `Recipe ${recipe.id} not found`,
+        message: `Recipe ${recipe.id} not found.`,
       });
       return;
+    }
+
+    if (recipe.title) {
+      const recipeList = recipeDao.list();
+
+      const recipeExists = recipeList.some(
+        (item) =>
+          item.id !== recipe.id &&
+          item.title.trim().toLowerCase() === recipe.title.toLowerCase(),
+      );
+
+      if (recipeExists) {
+        res.status(400).json({
+          code: "recipeAlreadyExists",
+          message: `Recipe with title "${recipe.title}" already exists.`,
+        });
+        return;
+      }
     }
 
     if (recipe.recipeCategoryId) {
@@ -55,14 +83,13 @@ async function UpdateAbl(req, res) {
       if (!category) {
         res.status(400).json({
           code: "recipeCategoryDoesNotExist",
-          message: `Recipe category with id ${recipe.recipeCategoryId} does not exist`,
+          message: `Recipe category with id ${recipe.recipeCategoryId} does not exist.`,
         });
         return;
       }
     }
 
     const updatedRecipe = recipeDao.update(recipe);
-
     const recipeCategory = categoryDao.get(updatedRecipe.recipeCategoryId);
 
     res.json({
