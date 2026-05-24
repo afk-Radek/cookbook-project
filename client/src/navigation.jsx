@@ -1,20 +1,31 @@
-import { Link } from "react-router-dom";
-
+import { Link, useLocation } from "react-router-dom";
+import logo from "./assets/logo.png";
 function Navigation() {
+  const location = useLocation();
+
+  const isHomePage = location.pathname === "/";
+
   return (
-    <nav className="bg-zinc-900 text-white px-6 py-4">
-      <div className="flex items-center gap-6">
-        <Link to="/" className="text-xl font-bold">
-          Cookbook
+    <nav className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <Link to="/">
+          <img src={logo} alt="Cookbook" className="h-12 w-auto" />
         </Link>
 
-        <Link to="/" className="hover:text-orange-300">
-          Recepty
-        </Link>
+        {!isHomePage && (
+          <div className="flex items-center gap-6">
+            <Link to="/recipe" className="text-zinc-700 hover:text-orange-600">
+              Recepty
+            </Link>
 
-        <Link to="/recipe/create" className="hover:text-orange-300">
-          Přidat recept
-        </Link>
+            <Link
+              to="/recipeCategory"
+              className="text-zinc-700 hover:text-orange-600"
+            >
+              Kategorie
+            </Link>
+          </div>
+        )}
       </div>
     </nav>
   );
