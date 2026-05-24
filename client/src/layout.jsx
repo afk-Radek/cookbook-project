@@ -1,16 +1,15 @@
-// import Container from "react-bootstrap/Container";
-import Navigation from "./navigation";
-
 import { Outlet } from "react-router-dom";
+import Navigation from "./navigation";
 
 function Layout() {
   return (
-    <>
+    <div className="min-h-screen bg-orange-50">
       <Navigation />
-      <div className="mt-56">
+
+      <main className="mx-auto max-w-6xl px-6 py-8">
         <Outlet />
-      </div>
-    </>
+      </main>
+    </div>
   );
 }
 

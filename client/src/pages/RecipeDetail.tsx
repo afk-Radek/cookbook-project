@@ -59,25 +59,81 @@ function RecipeDetail() {
   }
 
   return (
-    <div>
-      <Link to="/">← Zpět na recepty</Link>
+    <div className="mx-auto max-w-4xl">
+      <Link
+        to="/"
+        className="mb-6 inline-flex items-center gap-2 text-zinc-600 hover:text-orange-600"
+      >
+        ← Zpět na recepty
+      </Link>
 
-      <h1>{recipe.title}</h1>
+      <div className="rounded-3xl bg-white p-8 shadow-sm">
+        <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-start">
+          <div>
+            <h1 className="text-4xl font-bold text-zinc-900">{recipe.title}</h1>
 
-      {recipe.description && <p>{recipe.description}</p>}
+            {recipe.description && (
+              <p className="mt-4 text-lg text-zinc-600">{recipe.description}</p>
+            )}
+          </div>
 
-      {recipe.rating !== undefined && <p>Hodnocení: {recipe.rating}</p>}
+          <div className="flex gap-3">
+            <Link
+              to={`/recipe/${recipe.id}/edit`}
+              className="rounded-xl bg-zinc-900 px-4 py-2 text-white hover:bg-zinc-800"
+            >
+              ✏️ Upravit
+            </Link>
 
-      {recipe.recipeCategoryId && (
-        <p>Kategorie ID: {recipe.recipeCategoryId}</p>
-      )}
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="rounded-xl bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+            >
+              🗑️ Smazat
+            </button>
+          </div>
+        </div>
 
-      <div>
-        <Link to={`/recipe/${recipe.id}/edit`}>Upravit recept</Link>
+        <div className="mb-8 flex flex-wrap gap-4">
+          <div className="rounded-2xl bg-orange-100 px-4 py-3 text-orange-700">
+            ⏱️ {recipe.preparationTime} min
+          </div>
 
-        <button type="button" onClick={handleDelete}>
-          Smazat recept
-        </button>
+          <div className="rounded-2xl bg-orange-100 px-4 py-3 text-orange-700">
+            📋 {recipe.numberOfIngredients} ingrediencí
+          </div>
+
+          {recipe.rating !== undefined && (
+            <div className="rounded-2xl bg-yellow-100 px-4 py-3 text-yellow-700">
+              ⭐ {recipe.rating}/5
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-6">
+          <div>
+            <h2 className="mb-3 text-2xl font-semibold text-zinc-900">
+              Postup přípravy
+            </h2>
+
+            <div className="rounded-2xl bg-zinc-50 p-6 leading-8 text-zinc-700">
+              {recipe.preparationSteps}
+            </div>
+          </div>
+
+          {recipe.note && (
+            <div>
+              <h2 className="mb-3 text-2xl font-semibold text-zinc-900">
+                Poznámka
+              </h2>
+
+              <div className="rounded-2xl bg-orange-50 p-6 text-zinc-700">
+                {recipe.note}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
