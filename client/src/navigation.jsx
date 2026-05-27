@@ -15,14 +15,14 @@ function Navigation() {
         {!isHomePage && (
           <div className="flex items-center gap-6">
             <Link to="/recipe" className="text-zinc-700 hover:text-orange-600">
-              Recepty
+              Seznam receptů
             </Link>
 
             <Link
               to="/recipeCategory"
               className="text-zinc-700 hover:text-orange-600"
             >
-              Kategorie
+              Seznam kuchařek
             </Link>
           </div>
         )}

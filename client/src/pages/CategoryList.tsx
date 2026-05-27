@@ -102,10 +102,10 @@ function CategoryList() {
     <div className="mx-auto max-w-6xl">
       <div className="mb-10 flex items-center justify-between">
         <div>
-          <h1 className="text-5xl font-bold text-zinc-900">Kategorie</h1>
+          <h1 className="text-5xl font-bold text-zinc-900">Kuchařky</h1>
 
           <p className="mt-3 text-lg text-zinc-600">
-            Správa kategorií receptů.
+            Správa vytvořených kuchařek.
           </p>
         </div>
 
